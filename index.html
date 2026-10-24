@@ -1412,14 +1412,23 @@
       }
     }
 
-    //BUSCAR textos.txt EN EL MISMO LUGAR DE LA PAGINA
+    //BUSCAR textos.txt EN EL MISMO LUGAR DE LA PAGINA (PRUEBA VARIOS NOMBRES Y NUNCA USA CACHE)
     async function cargarTextosArchivo() {
-      try {
-        const r = await fetch("textos.txt?v=" + Date.now());
-        if (r.ok) paginas = leerTextos(await r.text());
-      } catch (err) {
-        console.log("No hay textos.txt, uso los de base");
+      const nombres = ["textos.txt", "texto.txt", "Textos.txt"];
+      for (const nombre of nombres) {
+        try {
+          const r = await fetch(nombre + "?v=" + Date.now(), { cache: "no-store" });
+          if (!r.ok) continue;
+          const t = await r.text();
+          if (!/PAG\s*\d+\s*:/i.test(t)) continue;
+          aplicarTextos(t);
+          console.log("Textos cargados desde " + nombre);
+          return;
+        } catch (err) {
+          console.log("No se pudo leer " + nombre);
+        }
       }
+      console.log("No hay textos.txt, uso los de base");
     }
 
     //BLOQUE PASOS DE LA CUENTA REGRESIVA (NUMERO, TEXTO Y MILISEGUNDOS)
