@@ -1,6 +1,6 @@
 PAG1:
 INICIO:
-Dedicado a la persona que convirtió lo cotidiano en el más fértil jardín. Cada día contigo ha sido aprender a florecer en todas las estaciones del año.
+Dedicado a la persona con la que el universo alineó mis estrellas. Entre millones de galaxias, tu órbita se cruzó con la mía, y desde entonces cada día a tu lado ha sido aprender a brillar bajo todas las constelaciones del cielo.
 FINAL:
 
 PAG2:
@@ -25,13 +25,50 @@ FINAL:
 
 PAG6:
 INICIO:
-La calma infinita que me brindas con un solo abrazo.
-La dulzura con la que tus ojos me miran cuando sonríes.
-Tu risa genuina, capaz de alegrar el día más gris.
-Haber crecido juntos y construir un amor paciente y sincero.
+La calma infinita que me brindas con un solo abrazo, la dulzura con la que tus ojos me miran cuando sonríes, tu risa genuina capaz de alegrar el día más gris y haber crecido juntos para construir un amor paciente y sincero.
 FINAL:
 
 PAG7:
 INICIO:
-Si hago cosas por ti, no es para que me quieras, es para que sepas que te quiero 
+Si hago cosas por ti, no es para que me quieras, es para que sepas que te quiero
+FINAL:
+
+PAG8:
+INICIO:
+Amo los detalles que nadie más ve, la forma en que me buscas con la mirada cuando entras a un lugar, cómo tu mano encuentra la mía sin pensarlo y esos silencios cómodos en los que no hace falta decir nada para sentirnos acompañados.
+FINAL:
+
+PAG9:
+INICIO:
+Contigo aprendí que el amor no hace ruido, se queda en las pequeñas cosas de todos los días.
+FINAL:
+
+PAG10:
+INICIO:
+Hay risas que solo existen entre nosotros, bromas que nadie más entiende y momentos tontos que se volvieron mis recuerdos favoritos, y cada vez que me acuerdo de ellos sonrío solo sin darme cuenta.
+FINAL:
+
+PAG11:
+INICIO:
+Gracias por quedarte en los días buenos y también en los difíciles, por escucharme cuando lo necesitaba y por recordarme, sin decirlo siquiera, que no tengo que ser perfecto para ser querido por ti.
+FINAL:
+
+PAG12:
+INICIO:
+Si pudiera volver a elegir entre todas las personas del mundo, te elegiría a ti una y mil veces.
+FINAL:
+
+PAG13:
+INICIO:
+Quiero seguir sumando días contigo, viajes, madrugadas, canciones y planes pequeños, quiero que el futuro nos encuentre juntos riéndonos de lo que hoy nos preocupa y agradeciendo haber llegado hasta aquí de la mano.
+FINAL:
+
+PAG14:
+INICIO:
+Mi lugar favorito nunca fue un sitio, siempre fue a tu lado, donde el tiempo se detiene y todo lo demás se vuelve pequeño, y por eso siempre voy a querer volver a ti.
+FINAL:
+
+PAG15:
+INICIO:
+Independientemente de cuánto tiempo pase, sean días, semanas, meses o años, siempre te estaré amando.
 FINAL:

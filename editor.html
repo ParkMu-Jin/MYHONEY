@@ -99,7 +99,7 @@
   <h1>EDITOR MYHONEY</h1>
   <p class="ayuda">
     Escribe tu texto entre INICIO: y FINAL: de cada página. Si dejas una página vacía se queda el texto de base.
-    En PAG6 cada línea es un punto de la lista. Cuando termines, descarga textos.txt y súbelo a GitHub para reemplazar el anterior.
+    Son 15 páginas. Cuando termines, descarga textos.txt y súbelo a GitHub para reemplazar el anterior.
   </p>
 
   <!-- BOTONES PARA IR A UNA PAGINA -->
@@ -125,7 +125,7 @@
     //BLOQUE TEXTO DE BASE (IGUAL A textos.txt)
     const PLANTILLA = `PAG1:
 INICIO:
-Dedicado a la persona que convirtió lo cotidiano en el más fértil jardín. Cada día contigo ha sido aprender a florecer en todas las estaciones del año.
+Dedicado a la persona con la que el universo alineó mis estrellas. Entre millones de galaxias, tu órbita se cruzó con la mía, y desde entonces cada día a tu lado ha sido aprender a brillar bajo todas las constelaciones del cielo.
 FINAL:
 
 PAG2:
@@ -140,29 +140,66 @@ FINAL:
 
 PAG4:
 INICIO:
-Tú no eres una coincidencia pasajera; eres la raíz, el tronco y la flor de todo lo bonito que le pasó a mi destino.
+Me perdí en su mirada, es que el color de sus ojos me encantaban; no eran ni azules, ni verdes. Eran color cafe, café que quita el sueño, café que producen desvelos
 FINAL:
 
 PAG5:
 INICIO:
-No importa hacia dónde sople el viento; mientras sostengas mi mano, cualquier lugar del mundo es nuestro hogar.
+No importa hacia dónde sople el viento; mientras sostengas mi mano eternamente, cualquier lugar del mundo es nuestro hogar.
 FINAL:
 
 PAG6:
 INICIO:
-La calma infinita que me brindas con un solo abrazo.
-La dulzura con la que tus ojos me miran cuando sonríes.
-Tu risa genuina, capaz de alegrar el día más gris.
-Haber crecido juntos y construir un amor paciente y sincero.
+La calma infinita que me brindas con un solo abrazo, la dulzura con la que tus ojos me miran cuando sonríes, tu risa genuina capaz de alegrar el día más gris y haber crecido juntos para construir un amor paciente y sincero.
 FINAL:
 
 PAG7:
 INICIO:
-Luego de dos años juntos, mi respuesta jamás cambiará: Me quedo a tu lado hoy, mañana y en cada estación que esté por venir.
+Si hago cosas por ti, no es para que me quieras, es para que sepas que te quiero
+FINAL:
+
+PAG8:
+INICIO:
+Amo los detalles que nadie más ve, la forma en que me buscas con la mirada cuando entras a un lugar, cómo tu mano encuentra la mía sin pensarlo y esos silencios cómodos en los que no hace falta decir nada para sentirnos acompañados.
+FINAL:
+
+PAG9:
+INICIO:
+Contigo aprendí que el amor no hace ruido, se queda en las pequeñas cosas de todos los días.
+FINAL:
+
+PAG10:
+INICIO:
+Hay risas que solo existen entre nosotros, bromas que nadie más entiende y momentos tontos que se volvieron mis recuerdos favoritos, y cada vez que me acuerdo de ellos sonrío solo sin darme cuenta.
+FINAL:
+
+PAG11:
+INICIO:
+Gracias por quedarte en los días buenos y también en los difíciles, por escucharme cuando lo necesitaba y por recordarme, sin decirlo siquiera, que no tengo que ser perfecto para ser querido por ti.
+FINAL:
+
+PAG12:
+INICIO:
+Si pudiera volver a elegir entre todas las personas del mundo, te elegiría a ti una y mil veces.
+FINAL:
+
+PAG13:
+INICIO:
+Quiero seguir sumando días contigo, viajes, madrugadas, canciones y planes pequeños, quiero que el futuro nos encuentre juntos riéndonos de lo que hoy nos preocupa y agradeciendo haber llegado hasta aquí de la mano.
+FINAL:
+
+PAG14:
+INICIO:
+Mi lugar favorito nunca fue un sitio, siempre fue a tu lado, donde el tiempo se detiene y todo lo demás se vuelve pequeño, y por eso siempre voy a querer volver a ti.
+FINAL:
+
+PAG15:
+INICIO:
+Independientemente de cuánto tiempo pase, sean días, semanas, meses o años, siempre te estaré amando.
 FINAL:
 `;
 
-    const CLAVE = "myhoney_borrador";
+    const CLAVE = "myhoney_borrador_15";
     const editor = document.getElementById("editor");
     const vista = document.getElementById("vista");
     const estadoEl = document.getElementById("estado");
@@ -199,7 +236,7 @@ FINAL:
 
     //BLOQUE BOTONES DE PAGINA (SALTA AL TEXTO Y A LA HOJA)
     const contBotones = document.getElementById("botones-pag");
-    for (let n = 1; n <= 7; n++) {
+    for (let n = 1; n <= 15; n++) {
       const b = document.createElement("button");
       b.textContent = "Pág " + n;
       b.addEventListener("click", () => {
