@@ -1,0 +1,1810 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>MYHONEY</title>
+
+<!-- LETRAS DE GOOGLE -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400;1,600&family=Pinyon+Script&display=swap" rel="stylesheet"/>
+
+<style>
+    /* BLOQUE COLORES Y LETRAS */
+    :root {
+      --bg-cream: #F6EFE3;
+      --bg-paper-aged: #EFE7D8;
+      --bg-verjure: #F9F5EC;
+      --sage-light: #A3B19B;
+      --sage-green: #7C8F6B;
+      --forest-dark: #2E4231;
+      --forest-deep: #1F2E21;
+      --botanical-brown: #3B2A24;
+      --botanical-faded: #6B554B;
+      --vintage-gold: #BFA15F;
+      --vintage-gold-dark: #9E7D3B;
+      --gold-foil: linear-gradient(135deg, #ECCF8A 0%, #BFA15F 50%, #906D29 100%);
+      --font-body: 'Cormorant Garamond', Georgia, serif;
+      --font-script: 'Pinyon Script', cursive;
+    }
+
+    /* BLOQUE BASE DE LA PAGINA */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg-cream);
+      font-family: var(--font-body);
+      color: var(--botanical-brown);
+      position: relative;
+    }
+
+    /* BLOQUE TEXTURA DE PAPEL */
+    .paper-texture-layer {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0.65;
+      mix-blend-mode: multiply;
+    }
+
+    /* BLOQUE MANCHAS DE ACUARELA */
+    .watercolor-wash-bg {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      background:
+        radial-gradient(ellipse at 15% 15%, rgba(163, 177, 155, 0.18) 0%, transparent 45%),
+        radial-gradient(ellipse at 85% 85%, rgba(224, 182, 175, 0.16) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 100%, rgba(240, 215, 185, 0.22) 0%, transparent 60%),
+        radial-gradient(circle at 50% 50%, transparent 60%, rgba(70, 50, 40, 0.08) 100%);
+    }
+
+    /* BLOQUE POLEN QUE FLOTA */
+    #pollen-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 4;
+    }
+
+    /* BLOQUE FONDO DE FLORES */
+    .botanical-scenery {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+    }
+
+    .botanical-svg-canvas {
+      width: 100%;
+      height: 100%;
+      max-height: 100vh;
+      object-fit: cover;
+      transform-origin: bottom center;
+    }
+
+    /* BLOQUE CONTENEDOR PRINCIPAL (INICIO Y CUENTA) */
+    #botanical-plate {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: clamp(24px, 5vh, 48px) clamp(20px, 4vw, 40px);
+      text-align: center;
+      transition: opacity 1.2s ease, transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    #botanical-plate.plate-hidden {
+      opacity: 0;
+      transform: scale(0.97);
+      pointer-events: none;
+    }
+
+    /* BLOQUE MARCO DORADO */
+    .plate-border-guide {
+      position: absolute;
+      inset: 16px;
+      border: 1px solid rgba(191, 161, 95, 0.35);
+      pointer-events: none;
+      z-index: 5;
+    }
+    .plate-border-guide::after {
+      content: '';
+      position: absolute;
+      inset: 3px;
+      border: 0.5px dashed rgba(124, 143, 107, 0.25);
+    }
+
+    /* BLOQUE TITULO DE ARRIBA */
+    .script-title-wrapper {
+      position: relative;
+      z-index: 12;
+      margin-top: clamp(8px, 2vh, 24px);
+    }
+
+    .script-title {
+      font-family: var(--font-script);
+      font-size: clamp(3.2rem, 7.5vw, 6.2rem);
+      font-weight: normal;
+      color: var(--botanical-brown);
+      line-height: 1;
+      text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);
+      letter-spacing: 1px;
+    }
+
+    .sub-annotation {
+      font-family: var(--font-body);
+      font-style: italic;
+      font-size: clamp(0.95rem, 1.8vw, 1.25rem);
+      color: var(--botanical-faded);
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    /* BLOQUE CENTRO */
+    .center-stage {
+      position: relative;
+      z-index: 12;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 200px;
+    }
+
+    /* BLOQUE BOTON PARA ABRIR */
+    #phase0-trigger {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      cursor: pointer;
+      padding: 20px 40px;
+      transition: opacity 0.6s ease;
+    }
+
+    #phase0-trigger.faded-out {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .trigger-intro {
+      font-family: var(--font-body);
+      font-weight: 300;
+      font-size: clamp(1.4rem, 2.6vw, 1.9rem);
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      color: var(--botanical-brown);
+    }
+
+    .trigger-link {
+      font-family: var(--font-body);
+      font-style: italic;
+      font-size: clamp(1.15rem, 2vw, 1.4rem);
+      color: var(--vintage-gold-dark);
+      text-decoration: underline;
+      text-underline-offset: 6px;
+      text-decoration-thickness: 1px;
+      letter-spacing: 2px;
+      transition: color 0.3s ease, letter-spacing 0.3s ease;
+    }
+
+    .trigger-link:hover {
+      color: var(--botanical-brown);
+      letter-spacing: 3px;
+    }
+
+    /* BLOQUE CUENTA REGRESIVA */
+    #phase1-counter {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+
+    #phase1-counter.active {
+      display: flex;
+      opacity: 1;
+    }
+
+    .counter-value {
+      font-family: var(--font-body);
+      font-weight: 300;
+      font-size: clamp(4.2rem, 12vw, 7.8rem);
+      line-height: 0.95;
+      color: var(--botanical-brown);
+      transition: opacity 0.12s ease-in-out, transform 0.12s ease-in-out;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .counter-label {
+      font-family: var(--font-body);
+      font-style: italic;
+      font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+      color: var(--vintage-gold-dark);
+      letter-spacing: 4px;
+      margin-top: 10px;
+      text-transform: uppercase;
+    }
+
+    .counter-rule {
+      width: 60px;
+      height: 1px;
+      background-color: var(--vintage-gold);
+      margin: 16px auto 0;
+      opacity: 0.7;
+    }
+
+    /* BLOQUE FRASE DE ABAJO */
+    .plate-footer {
+      position: relative;
+      z-index: 12;
+      max-width: 680px;
+      padding: 0 16px;
+      margin-bottom: clamp(6px, 1.5vh, 18px);
+    }
+
+    .plate-quote {
+      font-family: var(--font-body);
+      font-style: italic;
+      font-weight: 400;
+      font-size: clamp(1.15rem, 2.2vw, 1.6rem);
+      line-height: 1.45;
+      color: var(--botanical-brown);
+      letter-spacing: 0.8px;
+    }
+
+    /* BLOQUE DESTELLO DORADO */
+    #golden-flash {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle, #FFF4D9 20%, #EFE1C3 70%, #D8C39E 100%);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 80;
+      transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    #golden-flash.flash-on {
+      opacity: 0.88;
+    }
+
+    /* BLOQUE ESCENA DEL LIBRO */
+    #phase2-scene {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 1.4s ease, visibility 1.4s ease;
+      background: radial-gradient(circle at 50% 50%, #ECE3D4 0%, #D8C9B3 100%);
+      perspective: 1600px;
+      padding: clamp(16px, 3vh, 32px);
+    }
+
+    #phase2-scene.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* BLOQUE BARRA DE ARRIBA Y MUSICA */
+    .herbarium-topbar {
+      position: absolute;
+      top: 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      z-index: 100;
+      font-size: 0.9rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--botanical-faded);
+    }
+
+    .audio-herb-toggle {
+      background: none;
+      border: 1px solid rgba(124, 143, 107, 0.4);
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-family: inherit;
+      font-size: 0.8rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--botanical-brown);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.3s ease;
+      background-color: rgba(246, 239, 227, 0.7);
+    }
+    .audio-herb-toggle:hover {
+      background-color: var(--bg-cream);
+      border-color: var(--vintage-gold);
+    }
+
+    /* BLOQUE CONTENEDOR DEL LIBRO */
+    .book-stage {
+      position: relative;
+      width: clamp(310px, 88vw, 440px);
+      height: clamp(480px, 75vh, 620px);
+      transform-style: preserve-3d;
+      margin: auto;
+    }
+
+    @media (min-width: 900px) {
+      .book-stage.book-is-open {
+        transform: translateX(45%);
+        transition: transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+      }
+    }
+
+    /* BLOQUE TAPA DEL LIBRO */
+    .book-cover-wrap {
+      position: absolute;
+      inset: 0;
+      transform-origin: left center;
+      transform-style: preserve-3d;
+      transition: transform 1.4s cubic-bezier(0.25, 0.9, 0.3, 1);
+      z-index: 40;
+      cursor: pointer;
+      border-radius: 2px 14px 14px 2px;
+      box-shadow:
+        -5px 15px 40px rgba(31, 46, 33, 0.45),
+        -1px 2px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .book-stage.book-is-open .book-cover-wrap {
+      transform: rotateY(-180deg);
+      pointer-events: none;
+    }
+
+    /* BLOQUE PORTADA DE TELA VERDE */
+    .cover-exterior {
+      position: absolute;
+      inset: 0;
+      background-color: var(--forest-dark);
+      background-image:
+        radial-gradient(ellipse at 30% 20%, rgba(255, 255, 255, 0.08) 0%, transparent 60%),
+        repeating-linear-gradient(0deg, rgba(0,0,0,0.06), rgba(0,0,0,0.06) 1px, transparent 1px, transparent 2px),
+        repeating-linear-gradient(90deg, rgba(0,0,0,0.06), rgba(0,0,0,0.06) 1px, transparent 1px, transparent 2px);
+      border-radius: 2px 14px 14px 2px;
+      border: 1px solid #233425;
+      border-left: 14px solid var(--forest-deep);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: clamp(32px, 5vh, 46px) clamp(24px, 4vw, 36px);
+      text-align: center;
+      backface-visibility: hidden;
+      overflow: hidden;
+    }
+
+    /* BLOQUE COSTURA DEL LOMO */
+    .cover-exterior::before {
+      content: "";
+      position: absolute;
+      left: 10px;
+      top: 15px;
+      bottom: 15px;
+      width: 2px;
+      border-left: 1.5px dashed rgba(191, 161, 95, 0.55);
+    }
+
+    /* BLOQUE ESQUINAS DORADAS */
+    .corner-brass {
+      position: absolute;
+      width: 28px;
+      height: 28px;
+      border: 2px solid var(--vintage-gold);
+      opacity: 0.65;
+      pointer-events: none;
+    }
+    .corner-top-right { top: 12px; right: 12px; border-left: none; border-bottom: none; }
+    .corner-bottom-right { bottom: 12px; right: 12px; border-left: none; border-top: none; }
+
+    /* BLOQUE MARCO DEL TITULO */
+    .embossed-gold-frame {
+      border: 1px solid rgba(191, 161, 95, 0.45);
+      padding: 16px;
+      position: relative;
+      margin-top: 10px;
+      width: 100%;
+    }
+    .embossed-gold-frame::after {
+      content: '';
+      position: absolute;
+      inset: 3px;
+      border: 0.5px solid rgba(191, 161, 95, 0.25);
+    }
+
+    .cover-label-top {
+      font-size: 0.8rem;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: var(--vintage-gold);
+      opacity: 0.85;
+      margin-bottom: 6px;
+    }
+
+    /* BLOQUE TITULO MYHONEY EN LA PORTADA */
+    .cover-gold-title {
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: clamp(2rem, 5.2vw, 2.7rem);
+      letter-spacing: 6px;
+      background: var(--gold-foil);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.15;
+      filter: drop-shadow(0 1px 1px rgba(0,0,0,0.7));
+    }
+
+    .cover-gold-subtitle {
+      font-family: var(--font-body);
+      font-style: italic;
+      font-size: 1.05rem;
+      letter-spacing: 2px;
+      color: #E2CCA0;
+      margin-top: 6px;
+    }
+
+    /* BLOQUE LIRIO DORADO DE LA PORTADA */
+    .cover-botanical-emblem {
+      width: 130px;
+      height: 130px;
+      margin: 16px auto;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+    }
+
+    .cover-open-cue {
+      font-size: 0.85rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--vintage-gold);
+      opacity: 0.8;
+      animation: cueGentlePulse 2.8s infinite ease-in-out;
+    }
+
+    @keyframes cueGentlePulse {
+      0%, 100% { opacity: 0.5; transform: translateY(0); }
+      50% { opacity: 0.95; transform: translateY(-2px); }
+    }
+
+    /* BLOQUE LADO DE ADENTRO DE LA TAPA */
+    .cover-interior {
+      position: absolute;
+      inset: 0;
+      background-color: #E8DECC;
+      background-image: radial-gradient(ellipse at 80% 50%, rgba(0,0,0,0.06), transparent 60%);
+      border-radius: 14px 2px 2px 14px;
+      transform: rotateY(180deg);
+      backface-visibility: hidden;
+      border-right: 1px solid rgba(100, 80, 60, 0.2);
+    }
+
+    /* BLOQUE CONTENEDOR DE LAS HOJAS */
+    .book-body-block {
+      position: absolute;
+      inset: 0;
+      background-color: var(--bg-verjure);
+      border-radius: 2px 12px 12px 2px;
+      box-shadow:
+        inset 18px 0 25px -10px rgba(59, 42, 36, 0.22),
+        inset 0 0 10px rgba(0,0,0,0.04),
+        4px 8px 30px rgba(0, 0, 0, 0.22);
+      transform-style: preserve-3d;
+    }
+
+    /* BLOQUE HOJA DEL LIBRO */
+    .page-leaf-wrapper {
+      position: absolute;
+      inset: 0;
+      background-color: var(--bg-verjure);
+      background-image:
+        repeating-linear-gradient(0deg, rgba(90, 70, 50, 0.02), rgba(90, 70, 50, 0.02) 1px, transparent 1px, transparent 4px),
+        linear-gradient(to right, rgba(59, 42, 36, 0.16) 0%, rgba(59, 42, 36, 0.02) 7%, transparent 12%);
+      border-radius: 2px 12px 12px 2px;
+      padding: clamp(24px, 4.5vh, 38px) clamp(22px, 3.8vw, 32px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      color: var(--botanical-brown);
+      transform-origin: left center;
+      transform-style: preserve-3d;
+      transition: transform 1.1s cubic-bezier(0.25, 1, 0.35, 1), box-shadow 0.8s ease;
+      backface-visibility: hidden;
+      overflow: hidden;
+      border: 1px solid rgba(191, 161, 95, 0.18);
+      border-left: none;
+    }
+
+    /* BLOQUE HOJA VOLTEADA */
+    .page-leaf-wrapper.turned {
+      transform: rotateY(-180deg);
+      box-shadow: 12px 0 25px rgba(0,0,0,0.18);
+    }
+
+    /* BLOQUE ENCABEZADO DE LA HOJA */
+    .leaf-header-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 0.5px solid rgba(191, 161, 95, 0.4);
+      padding-bottom: 8px;
+      font-size: 0.75rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--sage-green);
+    }
+
+    .leaf-content-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      padding: 10px 0;
+    }
+
+    .leaf-title {
+      font-family: var(--font-body);
+      font-weight: 400;
+      font-size: clamp(1.6rem, 3.2vw, 2.1rem);
+      color: var(--botanical-brown);
+      margin-bottom: 12px;
+      line-height: 1.2;
+    }
+
+    .leaf-text {
+      font-size: clamp(1.05rem, 1.9vw, 1.25rem);
+      line-height: 1.6;
+      color: var(--botanical-brown);
+      font-weight: 300;
+    }
+
+    /* BLOQUE FOTO POLAROID */
+    .polaroid-frame {
+      background: #FFFFFF;
+      padding: 10px 10px 22px 10px;
+      box-shadow: 0 4px 15px rgba(59, 42, 36, 0.15), 0 1px 3px rgba(0,0,0,0.08);
+      transform: rotate(-1.5deg);
+      position: relative;
+      margin: 10px auto 14px;
+      width: clamp(190px, 60%, 250px);
+      text-align: center;
+    }
+
+    /* BLOQUE CINTA ADHESIVA */
+    .washi-tape {
+      position: absolute;
+      top: -10px;
+      left: 32%;
+      width: 70px;
+      height: 20px;
+      background-color: rgba(230, 220, 195, 0.7);
+      backdrop-filter: blur(1px);
+      transform: rotate(2deg);
+      border-left: 2px dashed rgba(180, 160, 130, 0.4);
+      border-right: 2px dashed rgba(180, 160, 130, 0.4);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      z-index: 10;
+    }
+
+    .polaroid-photo-box {
+      width: 100%;
+      height: 160px;
+      background-color: #ECE5D8;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .polaroid-photo-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: sepia(0.2) contrast(0.95);
+    }
+
+    .polaroid-caption {
+      font-family: var(--font-script);
+      font-size: 1.4rem;
+      color: var(--botanical-faded);
+      margin-top: 8px;
+      line-height: 1;
+    }
+
+    /* BLOQUE FRASE GRANDE */
+    .grand-botanical-quote {
+      font-family: var(--font-body);
+      font-style: italic;
+      font-size: clamp(1.35rem, 2.5vw, 1.85rem);
+      line-height: 1.45;
+      color: var(--botanical-brown);
+      text-align: center;
+      position: relative;
+      padding: 18px 12px;
+    }
+    .grand-botanical-quote::before {
+      content: "“";
+      font-size: 4rem;
+      font-family: var(--font-body);
+      color: rgba(191, 161, 95, 0.35);
+      position: absolute;
+      top: -24px;
+      left: 0;
+      line-height: 1;
+    }
+    .grand-botanical-quote::after {
+      content: "”";
+      font-size: 4rem;
+      font-family: var(--font-body);
+      color: rgba(191, 161, 95, 0.35);
+      position: absolute;
+      bottom: -38px;
+      right: 0;
+      line-height: 1;
+    }
+
+    /* BLOQUE LISTA DE COSAS QUE AMO */
+    .love-botanical-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 10px;
+      text-align: left;
+    }
+
+    .love-botanical-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: clamp(1rem, 1.8vw, 1.15rem);
+      line-height: 1.4;
+      color: var(--botanical-brown);
+    }
+
+    .list-flower-bullet {
+      flex-shrink: 0;
+      width: 16px;
+      height: 16px;
+      margin-top: 3px;
+    }
+
+    /* BLOQUE SELLO */
+    .herbarium-seal-stamp {
+      width: 80px;
+      height: 80px;
+      border: 1.5px solid var(--vintage-gold);
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 14px auto 0;
+      color: var(--vintage-gold-dark);
+      text-transform: uppercase;
+      font-size: 0.65rem;
+      letter-spacing: 2px;
+      transform: rotate(-8deg);
+      opacity: 0.85;
+    }
+
+    /* BLOQUE PIE DE LA HOJA */
+    .leaf-footer-bar {
+      border-top: 0.5px solid rgba(191, 161, 95, 0.4);
+      padding-top: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+      color: var(--botanical-faded);
+    }
+
+    /* BLOQUE NOMBRE DEBAJO DEL PIE */
+    .leaf-author-name {
+      display: block;
+      margin-top: 2px;
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+    }
+
+    /* BLOQUE BOTONES DE PAGINAS */
+    .herbarium-navigation {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      margin-top: 22px;
+      z-index: 100;
+    }
+
+    .btn-page-nav {
+      background: transparent;
+      border: 1px solid var(--vintage-gold);
+      color: var(--botanical-brown);
+      font-family: var(--font-body);
+      font-size: 1rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 7px 18px;
+      border-radius: 30px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      background-color: rgba(246, 239, 227, 0.6);
+    }
+
+    .btn-page-nav:hover:not(:disabled) {
+      background-color: var(--bg-cream);
+      border-color: var(--botanical-brown);
+      transform: translateY(-1px);
+    }
+
+    .btn-page-nav:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+      border-color: #C0B4A0;
+    }
+
+    .page-index-pill {
+      font-size: 0.95rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--botanical-faded);
+    }
+
+    /* BLOQUE FLOR FINAL QUE SE MUEVE */
+    .blooming-lily-container {
+      width: 140px;
+      height: 140px;
+      margin: 10px auto;
+      animation: gentleBreathe 5s ease-in-out infinite alternate;
+    }
+
+    @keyframes gentleBreathe {
+      0% { transform: scale(0.97) rotate(-1deg); }
+      100% { transform: scale(1.05) rotate(1.5deg); }
+    }
+
+    /* BLOQUE CELULAR */
+    @media (max-width: 600px) {
+      .book-stage {
+        width: 88vw;
+        height: 72vh;
+      }
+      .page-leaf-wrapper {
+        padding: 20px 18px;
+      }
+      .polaroid-frame {
+        width: 82%;
+        margin: 6px auto;
+      }
+      .polaroid-photo-box {
+        height: 125px;
+      }
+      .leaf-text {
+        font-size: 1rem;
+      }
+      .grand-botanical-quote {
+        font-size: 1.25rem;
+        padding: 10px 4px;
+      }
+    }
+</style>
+</head>
+
+<body>
+
+<!-- BLOQUE TEXTURA DE PAPEL -->
+<svg class="paper-texture-layer" height="100%" width="100%">
+  <filter height="100%" id="botanical-grain" width="100%" x="0%" y="0%">
+    <feTurbulence baseFrequency="0.04" numOctaves="4" result="noise" type="fractalNoise"></feTurbulence>
+    <feColorMatrix in="noise" result="coloredGrain" type="matrix" values="
+        0 0 0 0 0.23
+        0 0 0 0 0.16
+        0 0 0 0 0.14
+        0 0 0 0.14 0"></feColorMatrix>
+    <feBlend in="SourceGraphic" in2="coloredGrain" mode="multiply"></feBlend>
+  </filter>
+  <rect fill="#F6EFE3" filter="url(#botanical-grain)" height="100%" width="100%"></rect>
+</svg>
+
+<!-- BLOQUE MANCHAS DE COLOR -->
+<div class="watercolor-wash-bg"></div>
+
+<!-- BLOQUE POLEN -->
+<canvas id="pollen-canvas"></canvas>
+
+<!-- BLOQUE DESTELLO -->
+<div id="golden-flash"></div>
+
+<!-- BLOQUE MUSICA (EL ARCHIVO DEBE LLAMARSE FONDO.mp3) -->
+<audio id="musica" src="FONDO.mp3" loop preload="auto"></audio>
+
+<!-- BLOQUE DIBUJOS DE LIRIOS (SE REUSAN EN TODA LA PAGINA) -->
+<svg aria-hidden="true" style="position: absolute; width: 0; height: 0; overflow: hidden;">
+  <defs>
+
+    <!-- BLOQUE DESENFOQUE PARA LAS FLORES DE ATRAS -->
+    <filter id="soft-depth-blur">
+      <feGaussianBlur stdDeviation="3"></feGaussianBlur>
+    </filter>
+
+    <!-- FLOR BLANCA -->
+    <g id="lirio-blanco">
+      <path d="M100 130 Q105 210 110 320" fill="none" stroke="#7C8F6B" stroke-linecap="round" stroke-width="4.5"></path>
+      <path d="M102 180 Q60 170 30 200 Q70 205 104 190 Z" fill="#6B7F5C" opacity="0.85"></path>
+      <path d="M106 220 Q150 200 180 230 Q140 240 108 230 Z" fill="#5E7350" opacity="0.85"></path>
+      <path d="M100 120 C70 60 40 40 30 50 C40 80 80 110 98 122 Z" fill="url(#grad-lily-white-back)" stroke="#E5DEC9" stroke-width="0.5"></path>
+      <path d="M100 120 C130 60 160 40 170 50 C160 80 120 110 102 122 Z" fill="url(#grad-lily-white-back)" stroke="#E5DEC9" stroke-width="0.5"></path>
+      <path d="M100 120 C95 40 92 10 100 0 C108 10 105 40 100 120 Z" fill="url(#grad-lily-white-top)" stroke="#E5DEC9" stroke-width="0.5"></path>
+      <path d="M100 120 Q100 50 100 0" fill="none" stroke="#D3CCA8" stroke-width="0.8"></path>
+      <path d="M100 125 C50 115 10 125 0 140 C25 150 70 140 96 128 Z" fill="url(#grad-lily-white-front)" stroke="#DDD5BE" stroke-width="0.6"></path>
+      <path d="M100 125 C150 115 190 125 200 140 C175 150 130 140 104 128 Z" fill="url(#grad-lily-white-front)" stroke="#DDD5BE" stroke-width="0.6"></path>
+      <path d="M100 125 C88 155 70 190 60 198 C80 188 95 155 99 127 Z" fill="url(#grad-lily-white-front)" stroke="#DDD5BE" stroke-width="0.6"></path>
+      <path d="M100 125 C112 155 130 190 140 198 C120 188 105 155 101 127 Z" fill="url(#grad-lily-white-front)" stroke="#DDD5BE" stroke-width="0.6"></path>
+      <circle cx="94" cy="115" fill="#9E7D3B" r="1"></circle>
+      <circle cx="106" cy="115" fill="#9E7D3B" r="1"></circle>
+      <circle cx="100" cy="110" fill="#9E7D3B" r="1.2"></circle>
+      <circle cx="97" cy="102" fill="#9E7D3B" r="0.8"></circle>
+      <circle cx="103" cy="102" fill="#9E7D3B" r="0.8"></circle>
+      <path d="M100 122 Q88 95 80 82" fill="none" stroke="#BFA15F" stroke-width="1.2"></path>
+      <ellipse cx="78" cy="80" fill="#9E7D3B" rx="3" ry="1.5" transform="rotate(-30 78 80)"></ellipse>
+      <path d="M100 122 Q95 85 92 70" fill="none" stroke="#BFA15F" stroke-width="1.2"></path>
+      <ellipse cx="91" cy="68" fill="#BFA15F" rx="3" ry="1.5" transform="rotate(-15 91 68)"></ellipse>
+      <path d="M100 122 Q105 85 108 70" fill="none" stroke="#BFA15F" stroke-width="1.2"></path>
+      <ellipse cx="109" cy="68" fill="#BFA15F" rx="3" ry="1.5" transform="rotate(15 109 68)"></ellipse>
+      <path d="M100 122 Q112 95 120 82" fill="none" stroke="#BFA15F" stroke-width="1.2"></path>
+      <ellipse cx="122" cy="80" fill="#9E7D3B" rx="3" ry="1.5" transform="rotate(30 122 80)"></ellipse>
+    </g>
+
+    <!-- FLOR ROSA -->
+    <g id="lirio-rosa">
+      <path d="M100 130 Q95 210 90 320" fill="none" stroke="#6B7F5C" stroke-linecap="round" stroke-width="4.5"></path>
+      <path d="M98 175 Q50 165 20 190 Q65 198 100 185 Z" fill="#7C8F6B" opacity="0.85"></path>
+      <path d="M96 215 Q140 195 170 220 Q130 232 98 225 Z" fill="#5E7350" opacity="0.85"></path>
+      <path d="M100 120 C70 60 40 40 30 50 C40 80 80 110 98 122 Z" fill="url(#grad-lily-pink-back)" stroke="#E3B7BA" stroke-width="0.5"></path>
+      <path d="M100 120 C130 60 160 40 170 50 C160 80 120 110 102 122 Z" fill="url(#grad-lily-pink-back)" stroke="#E3B7BA" stroke-width="0.5"></path>
+      <path d="M100 120 C95 40 92 10 100 0 C108 10 105 40 100 120 Z" fill="url(#grad-lily-pink-top)" stroke="#E3B7BA" stroke-width="0.5"></path>
+      <path d="M100 125 C50 115 10 125 0 140 C25 150 70 140 96 128 Z" fill="url(#grad-lily-pink-front)" stroke="#D49A9E" stroke-width="0.6"></path>
+      <path d="M100 125 C150 115 190 125 200 140 C175 150 130 140 104 128 Z" fill="url(#grad-lily-pink-front)" stroke="#D49A9E" stroke-width="0.6"></path>
+      <path d="M100 125 C88 155 70 190 60 198 C80 188 95 155 99 127 Z" fill="url(#grad-lily-pink-front)" stroke="#D49A9E" stroke-width="0.6"></path>
+      <path d="M100 125 C112 155 130 190 140 198 C120 188 105 155 101 127 Z" fill="url(#grad-lily-pink-front)" stroke="#D49A9E" stroke-width="0.6"></path>
+      <circle cx="94" cy="115" fill="#752C32" r="1"></circle>
+      <circle cx="106" cy="115" fill="#752C32" r="1"></circle>
+      <circle cx="100" cy="110" fill="#752C32" r="1.2"></circle>
+      <path d="M100 122 Q88 95 80 82" fill="none" stroke="#BFA15F" stroke-width="1.2"></path>
+      <ellipse cx="78" cy="80" fill="#752C32" rx="3" ry="1.5" transform="rotate(-30 78 80)"></ellipse>
+      <path d="M100 122 Q112 95 120 82" fill="none" stroke="#BFA15F" stroke-width="1.2"></path>
+      <ellipse cx="122" cy="80" fill="#752C32" rx="3" ry="1.5" transform="rotate(30 122 80)"></ellipse>
+    </g>
+
+    <!-- FLOR DURAZNO -->
+    <g id="lirio-durazno">
+      <path d="M100 130 Q110 210 115 320" fill="none" stroke="#7C8F6B" stroke-linecap="round" stroke-width="4.5"></path>
+      <path d="M100 120 C70 60 40 40 30 50 C40 80 80 110 98 122 Z" fill="url(#grad-lily-peach)" stroke="#ECC2A7" stroke-width="0.5"></path>
+      <path d="M100 120 C130 60 160 40 170 50 C160 80 120 110 102 122 Z" fill="url(#grad-lily-peach)" stroke="#ECC2A7" stroke-width="0.5"></path>
+      <path d="M100 120 C95 40 92 10 100 0 C108 10 105 40 100 120 Z" fill="url(#grad-lily-peach)" stroke="#ECC2A7" stroke-width="0.5"></path>
+      <path d="M100 125 C50 115 10 125 0 140 C25 150 70 140 96 128 Z" fill="url(#grad-lily-peach)" stroke="#D89F7D" stroke-width="0.6"></path>
+      <path d="M100 125 C150 115 190 125 200 140 C175 150 130 140 104 128 Z" fill="url(#grad-lily-peach)" stroke="#D89F7D" stroke-width="0.6"></path>
+      <path d="M100 125 C88 155 70 190 60 198 C80 188 95 155 99 127 Z" fill="url(#grad-lily-peach)" stroke="#D89F7D" stroke-width="0.6"></path>
+      <path d="M100 125 C112 155 130 190 140 198 C120 188 105 155 101 127 Z" fill="url(#grad-lily-peach)" stroke="#D89F7D" stroke-width="0.6"></path>
+      <path d="M100 122 Q95 85 92 70" fill="none" stroke="#BFA15F" stroke-width="1.2"></path>
+      <ellipse cx="91" cy="68" fill="#8C4927" rx="3" ry="1.5" transform="rotate(-15 91 68)"></ellipse>
+      <path d="M100 122 Q105 85 108 70" fill="none" stroke="#BFA15F" stroke-width="1.2"></path>
+      <ellipse cx="109" cy="68" fill="#8C4927" rx="3" ry="1.5" transform="rotate(15 109 68)"></ellipse>
+    </g>
+
+    <!-- FLOR AMARILLA -->
+    <g id="lirio-amarillo">
+      <path d="M100 130 Q100 210 100 320" fill="none" stroke="#6B7F5C" stroke-linecap="round" stroke-width="4.5"></path>
+      <path d="M100 120 C70 60 40 40 30 50 C40 80 80 110 98 122 Z" fill="url(#grad-lily-yellow)" stroke="#DEC47A" stroke-width="0.5"></path>
+      <path d="M100 120 C130 60 160 40 170 50 C160 80 120 110 102 122 Z" fill="url(#grad-lily-yellow)" stroke="#DEC47A" stroke-width="0.5"></path>
+      <path d="M100 120 C95 40 92 10 100 0 C108 10 105 40 100 120 Z" fill="url(#grad-lily-yellow)" stroke="#DEC47A" stroke-width="0.5"></path>
+      <path d="M100 125 C50 115 10 125 0 140 C25 150 70 140 96 128 Z" fill="url(#grad-lily-yellow)" stroke="#C7A54C" stroke-width="0.6"></path>
+      <path d="M100 125 C150 115 190 125 200 140 C175 150 130 140 104 128 Z" fill="url(#grad-lily-yellow)" stroke="#C7A54C" stroke-width="0.6"></path>
+      <path d="M100 125 C88 155 70 190 60 198 C80 188 95 155 99 127 Z" fill="url(#grad-lily-yellow)" stroke="#C7A54C" stroke-width="0.6"></path>
+      <path d="M100 125 C112 155 130 190 140 198 C120 188 105 155 101 127 Z" fill="url(#grad-lily-yellow)" stroke="#C7A54C" stroke-width="0.6"></path>
+      <ellipse cx="78" cy="80" fill="#784A1E" rx="3" ry="1.5" transform="rotate(-30 78 80)"></ellipse>
+      <ellipse cx="122" cy="80" fill="#784A1E" rx="3" ry="1.5" transform="rotate(30 122 80)"></ellipse>
+    </g>
+
+    <!-- FLOR LILA -->
+    <g id="lirio-lila">
+      <path d="M100 130 Q104 210 108 320" fill="none" stroke="#7C8F6B" stroke-linecap="round" stroke-width="4.5"></path>
+      <path d="M100 120 C70 60 40 40 30 50 C40 80 80 110 98 122 Z" fill="url(#grad-lily-lilac)" stroke="#CABBDD" stroke-width="0.5"></path>
+      <path d="M100 120 C130 60 160 40 170 50 C160 80 120 110 102 122 Z" fill="url(#grad-lily-lilac)" stroke="#CABBDD" stroke-width="0.5"></path>
+      <path d="M100 120 C95 40 92 10 100 0 C108 10 105 40 100 120 Z" fill="url(#grad-lily-lilac)" stroke="#CABBDD" stroke-width="0.5"></path>
+      <path d="M100 125 C50 115 10 125 0 140 C25 150 70 140 96 128 Z" fill="url(#grad-lily-lilac)" stroke="#A995C2" stroke-width="0.6"></path>
+      <path d="M100 125 C150 115 190 125 200 140 C175 150 130 140 104 128 Z" fill="url(#grad-lily-lilac)" stroke="#A995C2" stroke-width="0.6"></path>
+      <path d="M100 125 C88 155 70 190 60 198 C80 188 95 155 99 127 Z" fill="url(#grad-lily-lilac)" stroke="#A995C2" stroke-width="0.6"></path>
+      <path d="M100 125 C112 155 130 190 140 198 C120 188 105 155 101 127 Z" fill="url(#grad-lily-lilac)" stroke="#A995C2" stroke-width="0.6"></path>
+      <ellipse cx="91" cy="68" fill="#4A3461" rx="3" ry="1.5" transform="rotate(-15 91 68)"></ellipse>
+      <ellipse cx="109" cy="68" fill="#4A3461" rx="3" ry="1.5" transform="rotate(15 109 68)"></ellipse>
+    </g>
+
+    <!-- FLOR CORAL -->
+    <g id="lirio-coral">
+      <path d="M100 130 Q96 210 92 320" fill="none" stroke="#5E7350" stroke-linecap="round" stroke-width="4.5"></path>
+      <path d="M100 120 C70 60 40 40 30 50 C40 80 80 110 98 122 Z" fill="url(#grad-lily-coral)" stroke="#E8B0A4" stroke-width="0.5"></path>
+      <path d="M100 120 C130 60 160 40 170 50 C160 80 120 110 102 122 Z" fill="url(#grad-lily-coral)" stroke="#E8B0A4" stroke-width="0.5"></path>
+      <path d="M100 120 C95 40 92 10 100 0 C108 10 105 40 100 120 Z" fill="url(#grad-lily-coral)" stroke="#E8B0A4" stroke-width="0.5"></path>
+      <path d="M100 125 C50 115 10 125 0 140 C25 150 70 140 96 128 Z" fill="url(#grad-lily-coral)" stroke="#C78174" stroke-width="0.6"></path>
+      <path d="M100 125 C150 115 190 125 200 140 C175 150 130 140 104 128 Z" fill="url(#grad-lily-coral)" stroke="#C78174" stroke-width="0.6"></path>
+      <path d="M100 125 C88 155 70 190 60 198 C80 188 95 155 99 127 Z" fill="url(#grad-lily-coral)" stroke="#C78174" stroke-width="0.6"></path>
+      <path d="M100 125 C112 155 130 190 140 198 C120 188 105 155 101 127 Z" fill="url(#grad-lily-coral)" stroke="#C78174" stroke-width="0.6"></path>
+      <ellipse cx="78" cy="80" fill="#6E2B20" rx="3" ry="1.5" transform="rotate(-30 78 80)"></ellipse>
+      <ellipse cx="122" cy="80" fill="#6E2B20" rx="3" ry="1.5" transform="rotate(30 122 80)"></ellipse>
+    </g>
+
+    <!-- BLOQUE DEGRADADOS DE COLOR DE LOS PETALOS -->
+    <linearGradient id="grad-lily-white-back" x1="0" x2="0" y1="1" y2="0">
+      <stop offset="0%" stop-color="#E2DBCB"></stop>
+      <stop offset="60%" stop-color="#F7F3E9"></stop>
+      <stop offset="100%" stop-color="#FAF8F2"></stop>
+    </linearGradient>
+    <linearGradient id="grad-lily-white-top" x1="0" x2="0" y1="1" y2="0">
+      <stop offset="0%" stop-color="#E8E2D5"></stop>
+      <stop offset="60%" stop-color="#FAF6EE"></stop>
+      <stop offset="100%" stop-color="#FFFFFF"></stop>
+    </linearGradient>
+    <linearGradient id="grad-lily-white-front" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#FAF7F0"></stop>
+      <stop offset="50%" stop-color="#EFE8D8"></stop>
+      <stop offset="100%" stop-color="#DFD5C0"></stop>
+    </linearGradient>
+    <linearGradient id="grad-lily-pink-back" x1="0" x2="0" y1="1" y2="0">
+      <stop offset="0%" stop-color="#DDA6AA"></stop>
+      <stop offset="60%" stop-color="#F2D7D9"></stop>
+      <stop offset="100%" stop-color="#FAF0F1"></stop>
+    </linearGradient>
+    <linearGradient id="grad-lily-pink-top" x1="0" x2="0" y1="1" y2="0">
+      <stop offset="0%" stop-color="#E6B5B9"></stop>
+      <stop offset="70%" stop-color="#F9E8E9"></stop>
+      <stop offset="100%" stop-color="#FFFFFF"></stop>
+    </linearGradient>
+    <linearGradient id="grad-lily-pink-front" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#FAF0F1"></stop>
+      <stop offset="55%" stop-color="#EBBBC0"></stop>
+      <stop offset="100%" stop-color="#D49399"></stop>
+    </linearGradient>
+    <linearGradient id="grad-lily-peach" x1="0" x2="0" y1="1" y2="0">
+      <stop offset="0%" stop-color="#E5AF8D"></stop>
+      <stop offset="50%" stop-color="#F5D8C6"></stop>
+      <stop offset="100%" stop-color="#FBF2EB"></stop>
+    </linearGradient>
+    <linearGradient id="grad-lily-yellow" x1="0" x2="0" y1="1" y2="0">
+      <stop offset="0%" stop-color="#D6B867"></stop>
+      <stop offset="50%" stop-color="#F1E0A7"></stop>
+      <stop offset="100%" stop-color="#FBF7E7"></stop>
+    </linearGradient>
+    <linearGradient id="grad-lily-lilac" x1="0" x2="0" y1="1" y2="0">
+      <stop offset="0%" stop-color="#B7A2D0"></stop>
+      <stop offset="50%" stop-color="#DDD3EC"></stop>
+      <stop offset="100%" stop-color="#F6F3FA"></stop>
+    </linearGradient>
+    <linearGradient id="grad-lily-coral" x1="0" x2="0" y1="1" y2="0">
+      <stop offset="0%" stop-color="#DC9183"></stop>
+      <stop offset="50%" stop-color="#F2C5BD"></stop>
+      <stop offset="100%" stop-color="#FAECE9"></stop>
+    </linearGradient>
+  </defs>
+</svg>
+
+<!-- BLOQUE RAMO DE FONDO -->
+<div class="botanical-scenery">
+  <svg class="botanical-svg-canvas" preserveAspectRatio="xMidYMax slice" viewBox="0 0 1000 700">
+    <!-- FLORES DE ATRAS (DESENFOCADAS) -->
+    <g filter="url(#soft-depth-blur)" opacity="0.45">
+      <use href="#lirio-amarillo" transform="scale(0.85) rotate(-14 120 380)" x="120" y="380"></use>
+      <use href="#lirio-lila" transform="scale(0.82) rotate(16 780 360)" x="780" y="360"></use>
+      <use href="#lirio-blanco" transform="scale(0.78)" x="460" y="320"></use>
+    </g>
+    <!-- FLORES DE ADELANTE -->
+    <g id="flower-bouquet-mid">
+      <use href="#lirio-rosa" transform="scale(1.15) rotate(-10 180 340)" x="180" y="340"></use>
+      <use href="#lirio-durazno" transform="scale(1.22) rotate(-3 320 320)" x="320" y="320"></use>
+      <use href="#lirio-blanco" transform="scale(1.3) rotate(0 500 300)" x="500" y="300"></use>
+      <use href="#lirio-coral" transform="scale(1.2) rotate(6 680 325)" x="680" y="325"></use>
+      <use href="#lirio-amarillo" transform="scale(1.12) rotate(12 800 345)" x="800" y="345"></use>
+    </g>
+  </svg>
+</div>
+
+<!-- BLOQUE CONTENEDOR PRINCIPAL (INICIO Y CUENTA REGRESIVA) -->
+<main id="botanical-plate">
+  <div class="plate-border-guide"></div>
+
+  <!-- TITULO DE ARRIBA -->
+  <header class="script-title-wrapper">
+    <h1 class="script-title">Feliz Aniversario</h1>
+    <p class="sub-annotation">Herbario de Dos Años de Amor</p>
+  </header>
+
+  <!-- CENTRO -->
+  <section class="center-stage">
+
+    <!-- BOTON ABRIR -->
+    <div id="phase0-trigger" onclick="comenzarExperiencia()">
+      <span class="trigger-intro">Para ti</span>
+      <span class="trigger-link">abrir</span>
+    </div>
+
+    <!-- CONTADOR -->
+    <div id="phase1-counter">
+      <div class="counter-value" id="counter-num">2</div>
+      <div class="counter-label" id="counter-unit">AÑOS JUNTOS</div>
+      <div class="counter-rule"></div>
+    </div>
+  </section>
+
+  <!-- FRASE DE ABAJO -->
+  <footer class="plate-footer">
+    <p class="plate-quote">“Luego de dos años juntos, ¿aún piensas que me marcharía?”</p>
+  </footer>
+</main>
+
+<!-- BLOQUE ESCENA DEL LIBRO -->
+<section id="phase2-scene">
+
+  <!-- BARRA DE ARRIBA CON MUSICA -->
+  <div class="herbarium-topbar">
+    <button class="audio-herb-toggle" onclick="toggleAudio()" title="Control de audio">
+      <span id="audio-icon">♫</span> <span id="audio-status">Música</span>
+    </button>
+  </div>
+
+  <!-- CONTENEDOR DEL LIBRO -->
+  <div class="book-stage" id="book-stage">
+
+    <!-- TAPA DEL LIBRO -->
+    <div class="book-cover-wrap" id="book-cover" onclick="abrirHerbario()">
+
+      <!-- PORTADA DE AFUERA -->
+      <div class="cover-exterior">
+        <div class="corner-brass corner-top-right"></div>
+        <div class="corner-brass corner-bottom-right"></div>
+
+        <!-- TITULO MYHONEY -->
+        <div class="embossed-gold-frame">
+          <div class="cover-label-top">Herbario Personal</div>
+          <h2 class="cover-gold-title">MYHONEY</h2>
+          <p class="cover-gold-subtitle">Memorias &amp; Especies de Amor</p>
+        </div>
+
+        <!-- FLOR DORADA -->
+        <div class="cover-botanical-emblem">
+          <svg fill="none" height="100%" viewBox="0 0 100 100" width="100%">
+            <path d="M50 85 C38 60 20 48 14 38 C28 32 44 50 50 85 Z" fill="url(#goldLomGrad)" opacity="0.9"></path>
+            <path d="M50 85 C62 60 80 48 86 38 C72 32 56 50 50 85 Z" fill="url(#goldLomGrad)" opacity="0.9"></path>
+            <path d="M50 85 C42 45 36 20 50 8 C64 20 58 45 50 85 Z" fill="url(#goldLomGrad)"></path>
+            <path d="M50 85 C30 75 18 80 14 70 C28 65 42 75 50 85 Z" fill="url(#goldLomGrad)" opacity="0.75"></path>
+            <path d="M50 85 C70 75 82 80 86 70 C72 65 58 75 50 85 Z" fill="url(#goldLomGrad)" opacity="0.75"></path>
+            <circle cx="46" cy="38" fill="#ECCF8A" r="1.8"></circle>
+            <circle cx="50" cy="32" fill="#ECCF8A" r="1.8"></circle>
+            <circle cx="54" cy="38" fill="#ECCF8A" r="1.8"></circle>
+            <defs>
+              <linearGradient id="goldLomGrad" x1="0" x2="1" y1="0" y2="1">
+                <stop offset="0%" stop-color="#ECCF8A"></stop>
+                <stop offset="50%" stop-color="#BFA15F"></stop>
+                <stop offset="100%" stop-color="#846220"></stop>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+
+        <div class="cover-open-cue">
+          <span>Toca para abrir el libro</span>
+        </div>
+      </div>
+
+      <!-- LADO DE ADENTRO DE LA TAPA -->
+      <div class="cover-interior"></div>
+    </div>
+
+    <!-- HOJAS DEL LIBRO (SE CREAN CON JAVASCRIPT) -->
+    <div class="book-body-block" id="pages-mount"></div>
+  </div>
+
+  <!-- BOTONES PARA PASAR PAGINAS -->
+  <div class="herbarium-navigation">
+    <button class="btn-page-nav" disabled id="btn-prev" onclick="paginaAnterior()">← Anterior</button>
+    <span class="page-index-pill" id="page-indicator">Portada</span>
+    <button class="btn-page-nav" id="btn-next" onclick="paginaSiguiente()">Siguiente →</button>
+  </div>
+</section>
+
+<script>
+    //BLOQUE MODO VISTA (LO USA EL EDITOR PARA VER LOS CAMBIOS)
+    const MODO_VISTA = (location.hash === "#vista");
+
+    //BLOQUE CARTAS DEL LIBRO DE BASE (LOS TEXTOS REALES SE LEEN DE textos.txt)
+    const PAGINAS_BASE = [
+      //CARTA 1: INTRODUCCION
+      {
+        tipo: "portadilla",
+        metaTop: "Pliego I • Herbario de Amor",
+        fechaTop: "MYHONEY 24/10/2024",
+        titulo: "Dos Años de Raíces",
+        texto: "Dedicado a la persona que convirtió lo cotidiano en el más fértil jardín. Cada día contigo ha sido aprender a florecer en todas las estaciones del año.",
+        subtexto: "Clasificación: Amor verdadero • 730 Días de Historia",
+        autor: "Aldhair Rodriguez"
+      },
+      //CARTA 2: FOTO ft1.png (MOMENTOS FAVORITOS)
+      {
+        tipo: "polaroid",
+        metaTop: "Pliego II • Recuerdos Vivos",
+        etiqueta: "Specimen A",
+        giro: -1.5,
+        cinta: "left: 32%; transform: rotate(2deg);",
+        alin: "center",
+        titulo: "Mis Momentos Favoritos",
+        imagenSrc: "ft1.png",
+        pieFoto: "Solo tú y yo",
+        texto: "Fue y siempre será estar recostado sobre ti en mi cama, porque solo éramos tú y yo, nadie más, algo único nuestro.",
+        piePagina: "Especie Inolvidable"
+      },
+      //CARTA 3: FOTO ft3.png (LA LUNA)
+      {
+        tipo: "polaroid",
+        metaTop: "Pliego III • Luz de Luna",
+        etiqueta: "Specimen B",
+        giro: 1.5,
+        cinta: "left: 28%; transform: rotate(-2deg);",
+        alin: "center",
+        titulo: "Nuestra Luna",
+        imagenSrc: "ft3.png",
+        pieFoto: "Bajo la luna",
+        texto: "También cuando de madrugada salimos a ver la luna juntos frente a tu casa, cuando no había luz.",
+        piePagina: "Luz de Luna"
+      },
+      //CARTA 4: FRASE GRANDE
+      {
+        tipo: "cita-grande",
+        metaTop: "Pliego IV • Pensamiento Botánico",
+        cita: "Tú no eres una coincidencia pasajera; eres la raíz, el tronco y la flor de todo lo bonito que le pasó a mi destino.",
+        autor: "— Dos años a tu lado"
+      },
+      //CARTA 5: FOTO ft2.png
+      {
+        tipo: "polaroid",
+        metaTop: "Pliego V • Travesías",
+        etiqueta: "Specimen C",
+        giro: -1.5,
+        cinta: "left: 32%; transform: rotate(2deg);",
+        alin: "left",
+        titulo: "Caminar Contigo",
+        imagenSrc: "ft2.png",
+        pieFoto: "Mil risas compartidas",
+        texto: "No importa hacia dónde sople el viento; mientras sostengas mi mano, cualquier lugar del mundo es nuestro hogar.",
+        piePagina: "Paso a Paso"
+      },
+      //CARTA 6: LISTA DE COSAS QUE AMO
+      {
+        tipo: "lista-amor",
+        metaTop: "Pliego VI • Especies Inolvidables",
+        titulo: "Cosas que Amo de Ti",
+        elementos: [
+          "La calma infinita que me brindas con un solo abrazo.",
+          "La dulzura con la que tus ojos me miran cuando sonríes.",
+          "Tu risa genuina, capaz de alegrar el día más gris.",
+          "Haber crecido juntos y construir un amor paciente y sincero."
+        ]
+      },
+      //CARTA 7: MENSAJE FINAL CON FLOR
+      {
+        tipo: "final-florecer",
+        metaTop: "Pliego VII • Promesa Eterna",
+        titulo: "Por Siempre",
+        texto: "Luego de dos años juntos, mi respuesta jamás cambiará: Me quedo a tu lado hoy, mañana y en cada estación que esté por venir.",
+        firma: "Feliz 2do Aniversario, Mi Amor"
+      }
+    ];
+
+    //BLOQUE COPIA DE LAS CARTAS (ESTA ES LA QUE SE MUESTRA)
+    function clonar(obj) { return JSON.parse(JSON.stringify(obj)); }
+    let paginas = clonar(PAGINAS_BASE);
+
+    //BLOQUE LEER textos.txt (FORMATO PAG3: INICIO: ... FINAL:)
+    function escapar(t) {
+      return t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+    function aHtml(t) {
+      return escapar(t).replace(/\r?\n/g, "<br>");
+    }
+
+    function leerTextos(contenido) {
+      const nuevas = clonar(PAGINAS_BASE);
+      const patron = /PAG\s*(\d+)\s*:\s*INICIO\s*:([\s\S]*?)FINAL\s*:/gi;
+      let m;
+      while ((m = patron.exec(contenido)) !== null) {
+        const n = parseInt(m[1], 10) - 1;
+        const texto = m[2].trim();
+        //SI LA PAGINA NO EXISTE O ESTA VACIA SE QUEDA EL TEXTO DE BASE
+        if (!texto || !nuevas[n]) continue;
+        const item = nuevas[n];
+        if (item.tipo === "lista-amor") {
+          //CADA LINEA ES UN PUNTO DE LA LISTA
+          const lineas = texto.split(/\r?\n/)
+            .map(l => l.replace(/^[\s\-•*]+/, "").trim())
+            .filter(Boolean);
+          if (lineas.length) item.elementos = lineas.map(escapar);
+        } else if (item.tipo === "cita-grande") {
+          item.cita = aHtml(texto);
+        } else {
+          item.texto = aHtml(texto);
+        }
+      }
+      return nuevas;
+    }
+
+    //CAMBIAR LOS TEXTOS Y DIBUJAR OTRA VEZ SI EL LIBRO YA ESTA
+    function aplicarTextos(contenido) {
+      paginas = leerTextos(contenido);
+      if (document.getElementById("pages-mount").children.length) {
+        renderizarHojasHerbario();
+      }
+    }
+
+    //BUSCAR textos.txt EN EL MISMO LUGAR DE LA PAGINA
+    async function cargarTextosArchivo() {
+      try {
+        const r = await fetch("textos.txt?v=" + Date.now());
+        if (r.ok) paginas = leerTextos(await r.text());
+      } catch (err) {
+        console.log("No hay textos.txt, uso los de base");
+      }
+    }
+
+    //BLOQUE PASOS DE LA CUENTA REGRESIVA (NUMERO, TEXTO Y MILISEGUNDOS)
+    const pasosCronologia = [
+      { num: "2", label: "AÑOS JUNTOS", duracion: 1700 },
+      { num: "24", label: "MESES DE AMOR", duracion: 1300 },
+      { num: "104", label: "SEMANAS COMPARTIENDO", duracion: 1000 },
+      { num: "730", label: "DÍAS INOLVIDABLES", duracion: 850 },
+      { num: "17,520", label: "HORAS SONRIENDO", duracion: 750 },
+      { num: "1,051,200", label: "MINUTOS A TU LADO", duracion: 650 },
+      { num: "60", label: "SEGUNDOS...", duracion: 380 },
+      { num: "30", label: "SEGUNDOS...", duracion: 320 },
+      { num: "10", label: "SEGUNDOS...", duracion: 260 },
+      { num: "5", label: "LATIDOS...", duracion: 240 },
+      { num: "4", label: "LATIDOS...", duracion: 200 },
+      { num: "3", label: "LATIDOS...", duracion: 170 },
+      { num: "2", label: "LATIDOS...", duracion: 150 },
+      { num: "1", label: "LATIDOS...", duracion: 140 },
+      { num: "0", label: "Y NUNCA ME IRÉ", duracion: 1400 }
+    ];
+
+    //BLOQUE MUSICA
+    const audioEl = document.getElementById("musica");
+    let audioActivo = false;
+    let pausadoPorUsuario = false;
+
+    //PONER MUSICA
+    function playMusic() {
+      audioEl.volume = 1;
+      audioEl.play().catch(() => {});
+    }
+
+    //BOTON PARA PAUSAR O SEGUIR LA MUSICA
+    function toggleAudio() {
+      if (audioEl.paused) {
+        pausadoPorUsuario = false;
+        playMusic();
+      } else {
+        pausadoPorUsuario = true;
+        audioEl.pause();
+      }
+    }
+
+    //CAMBIAR EL TEXTO DEL BOTON DE MUSICA
+    function actualizarUIudio() {
+      const icon = document.getElementById("audio-icon");
+      const status = document.getElementById("audio-status");
+      if (audioActivo) {
+        icon.textContent = "♫";
+        status.textContent = "Sonando";
+      } else {
+        icon.textContent = "✕";
+        status.textContent = "Pausa";
+      }
+    }
+
+    //AVISAR CUANDO SUENA O SE PAUSA
+    audioEl.addEventListener("play", () => {
+      audioActivo = true;
+      actualizarUIudio();
+      ["pointerdown", "touchstart", "keydown"].forEach(ev => {
+        document.removeEventListener(ev, primerToque);
+      });
+    });
+    audioEl.addEventListener("pause", () => {
+      audioActivo = false;
+      actualizarUIudio();
+    });
+
+    //BLOQUE PRIMER TOQUE (EL NAVEGADOR SOLO DEJA SONAR TRAS UN TOQUE)
+    function primerToque(e) {
+      if (e.target.closest && e.target.closest(".audio-herb-toggle")) return;
+      if (!pausadoPorUsuario && audioEl.paused) playMusic();
+    }
+
+    //INTENTAR SONAR APENAS ENTREN (NO EN EL EDITOR)
+    if (!MODO_VISTA) {
+      ["pointerdown", "touchstart", "keydown"].forEach(ev => {
+        document.addEventListener(ev, primerToque);
+      });
+      playMusic();
+    }
+
+    //BLOQUE ABRIR (EMPEZAR TODO)
+    function comenzarExperiencia() {
+      if (!pausadoPorUsuario && audioEl.paused) playMusic();
+
+      const trig = document.getElementById("phase0-trigger");
+      const counterBox = document.getElementById("phase1-counter");
+
+      trig.classList.add("faded-out");
+
+      setTimeout(() => {
+        trig.style.display = "none";
+        counterBox.classList.add("active");
+        arrancarCuentaRegresiva();
+      }, 500);
+    }
+
+    //BLOQUE CUENTA REGRESIVA
+    function arrancarCuentaRegresiva() {
+      const numEl = document.getElementById("counter-num");
+      const unitEl = document.getElementById("counter-unit");
+
+      let index = 0;
+      const total = pasosCronologia.length;
+
+      function avanzarPaso() {
+        if (index < total) {
+          const item = pasosCronologia[index];
+
+          //EFECTO SUAVE AL CAMBIAR NUMERO
+          numEl.style.opacity = "0.2";
+          numEl.style.transform = "scale(0.98)";
+
+          setTimeout(() => {
+            numEl.textContent = item.num;
+            unitEl.textContent = item.label;
+            numEl.style.opacity = "1";
+            numEl.style.transform = "scale(1)";
+          }, 60);
+
+          index++;
+
+          if (index < total) {
+            setTimeout(avanzarPaso, item.duracion);
+          } else {
+            //LLEGO A 0: PASAR AL LIBRO
+            setTimeout(transicionHaciaLibro, item.duracion);
+          }
+        }
+      }
+
+      avanzarPaso();
+    }
+
+    //BLOQUE PASAR DE LA CUENTA AL LIBRO
+    function transicionHaciaLibro() {
+      if (!pausadoPorUsuario && audioEl.paused) playMusic();
+
+      const flash = document.getElementById("golden-flash");
+      const plate = document.getElementById("botanical-plate");
+      const scene2 = document.getElementById("phase2-scene");
+
+      flash.classList.add("flash-on");
+
+      setTimeout(() => {
+        plate.classList.add("plate-hidden");
+        scene2.classList.add("visible");
+        renderizarHojasHerbario();
+
+        setTimeout(() => {
+          flash.classList.remove("flash-on");
+          plate.style.display = "none";
+        }, 500);
+      }, 700);
+    }
+
+    //BLOQUE CREAR LAS HOJAS DEL LIBRO
+    let paginaActual = -1; //-1 = LIBRO CERRADO
+    let libroAbierto = false;
+
+    function renderizarHojasHerbario() {
+      const container = document.getElementById("pages-mount");
+      container.innerHTML = "";
+
+      paginas.forEach((item, idx) => {
+        const leaf = document.createElement("div");
+        leaf.className = "page-leaf-wrapper";
+        leaf.id = `leaf-${idx}`;
+        leaf.style.zIndex = paginas.length - idx;
+
+        let interior = "";
+
+        //HOJA TIPO INTRODUCCION
+        if (item.tipo === "portadilla") {
+          interior = `
+            <div class="leaf-header-meta">
+              <span>${item.metaTop}</span>
+              <span>${item.fechaTop}</span>
+            </div>
+            <div class="leaf-content-body" style="text-align: center;">
+              <h3 class="leaf-title">${item.titulo}</h3>
+              <p class="leaf-text">${item.texto}</p>
+              <div class="herbarium-seal-stamp">
+                <span>Anno II</span>
+                <span style="font-size: 0.85rem; font-weight: bold; margin: 2px 0;">2 Años</span>
+                <span>Fidelis</span>
+              </div>
+              <p style="font-size: 0.85rem; font-style: italic; color: var(--botanical-faded); margin-top: 14px;">
+                ${item.subtexto}
+              </p>
+            </div>
+            <div>
+              <div class="leaf-footer-bar">
+                <span>Naturaleza & Amor</span>
+                <span>Pág. ${idx + 1}</span>
+              </div>
+              <span class="leaf-author-name">${item.autor}</span>
+            </div>
+          `;
+
+        //HOJA TIPO FOTO (SIRVE PARA ft1, ft3 Y ft2)
+        } else if (item.tipo === "polaroid") {
+          interior = `
+            <div class="leaf-header-meta">
+              <span>${item.metaTop}</span>
+              <span>${item.etiqueta}</span>
+            </div>
+            <div class="leaf-content-body">
+              <h3 class="leaf-title">${item.titulo}</h3>
+              <div class="polaroid-frame" style="transform: rotate(${item.giro}deg);">
+                <div class="washi-tape" style="${item.cinta}"></div>
+                <div class="polaroid-photo-box">
+                  <img src="${item.imagenSrc}" alt="${item.titulo}" onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\\'padding:15px; font-size:0.85rem; color:#8C7568; font-style:italic;\\'>[Coloca tu imagen aquí: <b>${item.imagenSrc}</b>]</div>';">
+                </div>
+                <div class="polaroid-caption">${item.pieFoto}</div>
+              </div>
+              <p class="leaf-text" style="text-align: ${item.alin}; font-size: 1.05rem;">${item.texto}</p>
+            </div>
+            <div class="leaf-footer-bar">
+              <span>${item.piePagina}</span>
+              <span>Pág. ${idx + 1}</span>
+            </div>
+          `;
+
+        //HOJA TIPO FRASE GRANDE
+        } else if (item.tipo === "cita-grande") {
+          interior = `
+            <div class="leaf-header-meta">
+              <span>${item.metaTop}</span>
+              <span>Axioma</span>
+            </div>
+            <div class="leaf-content-body" style="justify-content: center;">
+              <div class="grand-botanical-quote">
+                ${item.cita}
+              </div>
+              <p style="text-align: right; font-style: italic; font-size: 1.15rem; color: var(--sage-green); margin-top: 14px;">
+                ${item.autor}
+              </p>
+            </div>
+            <div class="leaf-footer-bar">
+              <span>Palabras Inmarchitables</span>
+              <span>Pág. ${idx + 1}</span>
+            </div>
+          `;
+
+        //HOJA TIPO LISTA
+        } else if (item.tipo === "lista-amor") {
+          const itemsHtml = item.elementos.map(el => `
+            <li>
+              <svg class="list-flower-bullet" viewBox="0 0 20 20" fill="none">
+                <circle cx="10" cy="10" r="3" fill="#BFA15F"/>
+                <circle cx="10" cy="5" r="2" fill="#7C8F6B"/>
+                <circle cx="10" cy="15" r="2" fill="#7C8F6B"/>
+                <circle cx="5" cy="10" r="2" fill="#7C8F6B"/>
+                <circle cx="15" cy="10" r="2" fill="#7C8F6B"/>
+              </svg>
+              <span>${el}</span>
+            </li>
+          `).join('');
+
+          interior = `
+            <div class="leaf-header-meta">
+              <span>${item.metaTop}</span>
+              <span>Catálogo</span>
+            </div>
+            <div class="leaf-content-body">
+              <h3 class="leaf-title">${item.titulo}</h3>
+              <ul class="love-botanical-list">
+                ${itemsHtml}
+              </ul>
+            </div>
+            <div class="leaf-footer-bar">
+              <span>Tus virtudes</span>
+              <span>Pág. ${idx + 1}</span>
+            </div>
+          `;
+
+        //HOJA FINAL CON FLOR
+        } else if (item.tipo === "final-florecer") {
+          interior = `
+            <div class="leaf-header-meta">
+              <span>${item.metaTop}</span>
+              <span>Promesa Perpetua</span>
+            </div>
+            <div class="leaf-content-body" style="text-align: center;">
+              <h3 class="leaf-title">${item.titulo}</h3>
+              <div class="blooming-lily-container">
+                <svg viewBox="0 0 200 200" width="100%" height="100%">
+                  <use href="#lirio-rosa" x="0" y="-30" transform="scale(0.95)" />
+                </svg>
+              </div>
+              <p class="leaf-text" style="font-size: 1.15rem; margin-top: 6px;">${item.texto}</p>
+              <div style="font-family: var(--font-script); font-size: 2.3rem; color: var(--botanical-brown); margin-top: 8px;">
+                ${item.firma}
+              </div>
+            </div>
+            <div class="leaf-footer-bar">
+              <span>Amor Eterno</span>
+              <span>Pág. ${idx + 1} de ${paginas.length}</span>
+            </div>
+          `;
+        }
+
+        leaf.innerHTML = interior;
+        container.appendChild(leaf);
+      });
+
+      //SI EL LIBRO YA ESTABA ABIERTO, VOLVER A LA MISMA HOJA
+      if (libroAbierto) {
+        irAPagina(paginaActual);
+      } else {
+        actualizarNavegacion();
+      }
+    }
+
+    //BLOQUE IR DIRECTO A UNA HOJA
+    function irAPagina(idx) {
+      idx = Math.max(0, Math.min(idx, paginas.length - 1));
+      if (!libroAbierto) {
+        libroAbierto = true;
+        document.getElementById("book-stage").classList.add("book-is-open");
+      }
+      paginaActual = idx;
+      paginas.forEach((_, i) => {
+        const hoja = document.getElementById(`leaf-${i}`);
+        if (!hoja) return;
+        if (i < idx) {
+          hoja.classList.add("turned");
+          hoja.style.zIndex = 30 + i;
+        } else {
+          hoja.classList.remove("turned");
+          hoja.style.zIndex = paginas.length - i;
+        }
+      });
+      actualizarNavegacion();
+    }
+
+    //BLOQUE ABRIR EL LIBRO
+    function abrirHerbario() {
+      if (libroAbierto) return;
+      libroAbierto = true;
+      paginaActual = 0;
+      document.getElementById("book-stage").classList.add("book-is-open");
+      actualizarNavegacion();
+    }
+
+    //PASAR A LA SIGUIENTE HOJA
+    function paginaSiguiente() {
+      if (!libroAbierto) {
+        abrirHerbario();
+        return;
+      }
+
+      if (paginaActual < paginas.length - 1) {
+        const hojaActual = document.getElementById(`leaf-${paginaActual}`);
+        if (hojaActual) {
+          hojaActual.classList.add("turned");
+          hojaActual.style.zIndex = 30 + paginaActual;
+        }
+        paginaActual++;
+        actualizarNavegacion();
+      }
+    }
+
+    //VOLVER A LA HOJA DE ANTES
+    function paginaAnterior() {
+      if (!libroAbierto) return;
+
+      if (paginaActual > 0) {
+        paginaActual--;
+        const hojaPrevia = document.getElementById(`leaf-${paginaActual}`);
+        if (hojaPrevia) {
+          hojaPrevia.classList.remove("turned");
+          hojaPrevia.style.zIndex = paginas.length - paginaActual;
+        }
+        actualizarNavegacion();
+      } else if (paginaActual === 0) {
+        //CERRAR EL LIBRO
+        document.getElementById("book-stage").classList.remove("book-is-open");
+        libroAbierto = false;
+        paginaActual = -1;
+        actualizarNavegacion();
+      }
+    }
+
+    //ACTUALIZAR BOTONES Y TEXTO DE PAGINA
+    function actualizarNavegacion() {
+      const btnPrev = document.getElementById("btn-prev");
+      const btnNext = document.getElementById("btn-next");
+      const indicator = document.getElementById("page-indicator");
+
+      if (!libroAbierto) {
+        btnPrev.disabled = true;
+        btnNext.disabled = false;
+        indicator.textContent = "Portada Cerrada";
+      } else {
+        btnPrev.disabled = false;
+        btnNext.disabled = (paginaActual >= paginas.length - 1);
+        indicator.textContent = `Pliego ${paginaActual + 1} de ${paginas.length}`;
+      }
+    }
+
+    //BLOQUE DESLIZAR EL DEDO EN CELULAR
+    let touchStartX = 0;
+    let touchEndX = 0;
+    const stageElement = document.getElementById("phase2-scene");
+
+    stageElement.addEventListener("touchstart", (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    stageElement.addEventListener("touchend", (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      manejarSwipe();
+    }, { passive: true });
+
+    function manejarSwipe() {
+      const diff = touchEndX - touchStartX;
+      if (Math.abs(diff) > 45) {
+        if (diff < 0) {
+          //DESLIZAR A LA IZQUIERDA = SIGUIENTE
+          paginaSiguiente();
+        } else {
+          //DESLIZAR A LA DERECHA = ANTERIOR
+          paginaAnterior();
+        }
+      }
+    }
+
+    //BLOQUE MENSAJES DEL EDITOR (CAMBIAR TEXTOS E IR A UNA HOJA)
+    window.addEventListener("message", (e) => {
+      const d = e.data;
+      if (!d || !d.tipo) return;
+      if (d.tipo === "textos") aplicarTextos(d.contenido || "");
+      if (d.tipo === "ir") {
+        if (!document.getElementById("pages-mount").children.length) return;
+        irAPagina(d.pagina);
+      }
+    });
+
+    //BLOQUE ENTRAR DIRECTO AL LIBRO (SOLO PARA EL EDITOR)
+    function modoVista() {
+      document.getElementById("botanical-plate").style.display = "none";
+      const escena = document.getElementById("phase2-scene");
+      escena.style.transition = "none";
+      escena.classList.add("visible");
+      libroAbierto = true;
+      paginaActual = 0;
+      document.getElementById("book-stage").classList.add("book-is-open");
+      renderizarHojasHerbario();
+    }
+
+    //BLOQUE POLEN FLOTANDO
+    const canvas = document.getElementById("pollen-canvas");
+    const ctx = canvas.getContext("2d");
+    let width, height;
+    const granosPolen = [];
+
+    function resizeCanvas() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    //CADA GRANITO DE POLEN
+    class GranoPolen {
+      constructor() {
+        this.reset(true);
+      }
+      reset(primeraVez = false) {
+        this.x = Math.random() * width;
+        this.y = primeraVez ? Math.random() * height : height + 10;
+        this.size = 1 + Math.random() * 2.2;
+        this.vy = -(0.2 + Math.random() * 0.45);
+        this.vx = (Math.random() - 0.5) * 0.35;
+        this.alpha = 0.2 + Math.random() * 0.55;
+        this.wiggle = Math.random() * Math.PI * 2;
+        this.wiggleSpeed = 0.015 + Math.random() * 0.02;
+      }
+      update() {
+        this.wiggle += this.wiggleSpeed;
+        this.x += this.vx + Math.sin(this.wiggle) * 0.3;
+        this.y += this.vy;
+
+        if (this.y < -10 || this.x < -10 || this.x > width + 10) {
+          this.reset(false);
+        }
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(191, 161, 95, ${this.alpha})`;
+        ctx.fill();
+      }
+    }
+
+    //CREAR 40 GRANITOS
+    for (let i = 0; i < 40; i++) {
+      granosPolen.push(new GranoPolen());
+    }
+
+    //MOVER EL POLEN CADA FRAME
+    function animarPolen() {
+      ctx.clearRect(0, 0, width, height);
+      for (let p of granosPolen) {
+        p.update();
+        p.draw();
+      }
+      requestAnimationFrame(animarPolen);
+    }
+    animarPolen();
+
+    //BLOQUE ARRANQUE (EN EL EDITOR ENTRA DIRECTO AL LIBRO, EN LO NORMAL LEE textos.txt)
+    if (MODO_VISTA) {
+      modoVista();
+    } else {
+      cargarTextosArchivo();
+    }
+</script>
+</body>
+</html>

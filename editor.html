@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Editor MYHONEY</title>
+
+<style>
+    /* BLOQUE BASE */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Georgia, serif;
+      background: #F6EFE3;
+      color: #3B2A24;
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 460px;
+      gap: 20px;
+      padding: 20px;
+    }
+
+    /* BLOQUE PANEL DEL TEXTO */
+    .panel {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    h1 { font-size: 1.5rem; font-weight: 400; letter-spacing: 2px; }
+
+    .ayuda {
+      font-size: 0.9rem;
+      line-height: 1.5;
+      color: #6B554B;
+    }
+
+    /* BLOQUE BOTONES DE PAGINA */
+    .botones-pag, .acciones {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    button {
+      background: #F9F5EC;
+      border: 1px solid #BFA15F;
+      color: #3B2A24;
+      font-family: inherit;
+      font-size: 0.9rem;
+      padding: 7px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+    button:hover { background: #fff; border-color: #3B2A24; }
+    .principal { background: #2E4231; color: #F6EFE3; border-color: #2E4231; }
+    .principal:hover { background: #1F2E21; color: #fff; }
+
+    /* BLOQUE CAJA DE TEXTO */
+    textarea {
+      flex: 1;
+      min-height: 420px;
+      width: 100%;
+      resize: vertical;
+      padding: 14px;
+      font-family: Consolas, monospace;
+      font-size: 0.95rem;
+      line-height: 24px;
+      background: #FFFDF8;
+      color: #3B2A24;
+      border: 1px solid #BFA15F;
+      border-radius: 10px;
+    }
+
+    #estado { font-size: 0.85rem; color: #7C8F6B; min-height: 1.2em; }
+
+    /* BLOQUE VISTA PREVIA */
+    .vista iframe {
+      width: 100%;
+      height: calc(100vh - 40px);
+      border: 1px solid #BFA15F;
+      border-radius: 12px;
+      background: #fff;
+    }
+
+    /* BLOQUE CELULAR */
+    @media (max-width: 900px) {
+      body { grid-template-columns: 1fr; }
+      .vista iframe { height: 640px; }
+    }
+</style>
+</head>
+
+<body>
+
+<!-- BLOQUE PANEL DEL TEXTO -->
+<div class="panel">
+  <h1>EDITOR MYHONEY</h1>
+  <p class="ayuda">
+    Escribe tu texto entre INICIO: y FINAL: de cada página. Si dejas una página vacía se queda el texto de base.
+    En PAG6 cada línea es un punto de la lista. Cuando termines, descarga textos.txt y súbelo a GitHub para reemplazar el anterior.
+  </p>
+
+  <!-- BOTONES PARA IR A UNA PAGINA -->
+  <div class="botones-pag" id="botones-pag"></div>
+
+  <textarea id="editor" spellcheck="false"></textarea>
+
+  <div class="acciones">
+    <button class="principal" id="btn-descargar">Descargar textos.txt</button>
+    <button id="btn-copiar">Copiar todo</button>
+    <button id="btn-archivo">Cargar textos.txt</button>
+    <button id="btn-base">Volver al texto de base</button>
+  </div>
+  <p id="estado"></p>
+</div>
+
+<!-- BLOQUE VISTA PREVIA DEL LIBRO -->
+<div class="vista">
+  <iframe id="vista" src="index.html#vista"></iframe>
+</div>
+
+<script>
+    //BLOQUE TEXTO DE BASE (IGUAL A textos.txt)
+    const PLANTILLA = `PAG1:
+INICIO:
+Dedicado a la persona que convirtió lo cotidiano en el más fértil jardín. Cada día contigo ha sido aprender a florecer en todas las estaciones del año.
+FINAL:
+
+PAG2:
+INICIO:
+Fue y siempre será estar recostado sobre ti en mi cama, porque solo éramos tú y yo, nadie más, algo único nuestro.
+FINAL:
+
+PAG3:
+INICIO:
+También cuando de madrugada salimos a ver la luna juntos frente a tu casa, cuando no había luz.
+FINAL:
+
+PAG4:
+INICIO:
+Tú no eres una coincidencia pasajera; eres la raíz, el tronco y la flor de todo lo bonito que le pasó a mi destino.
+FINAL:
+
+PAG5:
+INICIO:
+No importa hacia dónde sople el viento; mientras sostengas mi mano, cualquier lugar del mundo es nuestro hogar.
+FINAL:
+
+PAG6:
+INICIO:
+La calma infinita que me brindas con un solo abrazo.
+La dulzura con la que tus ojos me miran cuando sonríes.
+Tu risa genuina, capaz de alegrar el día más gris.
+Haber crecido juntos y construir un amor paciente y sincero.
+FINAL:
+
+PAG7:
+INICIO:
+Luego de dos años juntos, mi respuesta jamás cambiará: Me quedo a tu lado hoy, mañana y en cada estación que esté por venir.
+FINAL:
+`;
+
+    const CLAVE = "myhoney_borrador";
+    const editor = document.getElementById("editor");
+    const vista = document.getElementById("vista");
+    const estadoEl = document.getElementById("estado");
+
+    //MENSAJE CHIQUITO DE ESTADO
+    function estado(t) { estadoEl.textContent = t; }
+
+    //ENVIAR EL TEXTO A LA VISTA PREVIA
+    function enviarTexto() {
+      if (vista.contentWindow) {
+        vista.contentWindow.postMessage({ tipo: "textos", contenido: editor.value }, "*");
+      }
+    }
+
+    //GUARDAR BORRADOR EN ESTE NAVEGADOR
+    function guardarBorrador() {
+      try { localStorage.setItem(CLAVE, editor.value); } catch (e) {}
+    }
+
+    //BLOQUE CAMBIOS EN VIVO
+    let temporizador;
+    editor.addEventListener("input", () => {
+      clearTimeout(temporizador);
+      temporizador = setTimeout(() => {
+        enviarTexto();
+        guardarBorrador();
+        estado("Cambios guardados como borrador");
+      }, 300);
+    });
+
+    //CUANDO LA VISTA CARGA, MANDARLE EL TEXTO
+    vista.addEventListener("load", enviarTexto);
+    setTimeout(enviarTexto, 800);
+
+    //BLOQUE BOTONES DE PAGINA (SALTA AL TEXTO Y A LA HOJA)
+    const contBotones = document.getElementById("botones-pag");
+    for (let n = 1; n <= 7; n++) {
+      const b = document.createElement("button");
+      b.textContent = "Pág " + n;
+      b.addEventListener("click", () => {
+        const pos = editor.value.search(new RegExp("PAG\\s*" + n + "\\s*:", "i"));
+        if (pos >= 0) {
+          const linea = editor.value.substring(0, pos).split("\n").length;
+          editor.focus();
+          editor.setSelectionRange(pos, pos);
+          editor.scrollTop = (linea - 1) * 24;
+        }
+        if (vista.contentWindow) {
+          vista.contentWindow.postMessage({ tipo: "ir", pagina: n - 1 }, "*");
+        }
+      });
+      contBotones.appendChild(b);
+    }
+
+    //BLOQUE DESCARGAR textos.txt
+    document.getElementById("btn-descargar").addEventListener("click", () => {
+      const blob = new Blob([editor.value], { type: "text/plain;charset=utf-8" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "textos.txt";
+      a.click();
+      URL.revokeObjectURL(a.href);
+      estado("Descargado: sube textos.txt a GitHub");
+    });
+
+    //BLOQUE COPIAR TODO
+    document.getElementById("btn-copiar").addEventListener("click", () => {
+      editor.select();
+      document.execCommand("copy");
+      estado("Texto copiado");
+    });
+
+    //BLOQUE CARGAR textos.txt DEL MISMO LUGAR
+    async function cargarDesdeArchivo() {
+      try {
+        const r = await fetch("textos.txt?v=" + Date.now());
+        if (!r.ok) throw new Error("no hay archivo");
+        editor.value = await r.text();
+        estado("Cargado desde textos.txt");
+      } catch (e) {
+        editor.value = PLANTILLA;
+        estado("No encontré textos.txt, puse el texto de base");
+      }
+      guardarBorrador();
+      enviarTexto();
+    }
+    document.getElementById("btn-archivo").addEventListener("click", cargarDesdeArchivo);
+
+    //BLOQUE VOLVER AL TEXTO DE BASE
+    document.getElementById("btn-base").addEventListener("click", () => {
+      editor.value = PLANTILLA;
+      guardarBorrador();
+      enviarTexto();
+      estado("Texto de base puesto");
+    });
+
+    //BLOQUE ARRANQUE (USA EL BORRADOR SI EXISTE)
+    let borrador = null;
+    try { borrador = localStorage.getItem(CLAVE); } catch (e) {}
+    if (borrador) {
+      editor.value = borrador;
+      estado("Borrador recuperado");
+    } else {
+      editor.value = PLANTILLA;
+    }
+</script>
+</body>
+</html>
