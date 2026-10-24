@@ -311,40 +311,48 @@
       visibility: visible;
     }
 
-    /* BLOQUE LIRIOS QUE SALEN AL FINAL (ABAJO DEL LIBRO) */
+    /* BLOQUE LIRIOS QUE SALEN AL FINAL (ALREDEDOR DE TODO EL LIBRO) */
     .lirios-final {
+      --k: 1;
       position: absolute;
-      left: 0;
-      bottom: 0;
-      width: 100%;
-      height: 46vh;
+      inset: 0;
+      overflow: hidden;
       pointer-events: none;
       z-index: 0;
+      visibility: hidden;
       opacity: 0;
-      transition: opacity 1.2s ease;
+      transition: opacity 1.2s ease, visibility 0s linear 1.2s;
     }
     .lirios-final.activo {
+      visibility: visible;
       opacity: 1;
+      transition: opacity 1.2s ease;
     }
-    .lirios-final svg {
-      width: 100%;
-      height: 100%;
+
+    .lirio-pos {
+      position: absolute;
+      width: calc(var(--s) * var(--k) * 1vmin);
+      transform: translate(-50%, -100%) rotate(var(--r));
+      transform-origin: 50% 100%;
+    }
+    .lirio-pos svg {
       display: block;
+      width: 100%;
+      height: auto;
     }
 
     .brota {
-      transform-box: fill-box;
       transform-origin: 50% 100%;
       opacity: 0;
-      transform: scale(0.2) translateY(40px);
+      transform: scale(0.2);
     }
     .lirios-final.activo .brota {
       animation: brotar 1.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
       animation-delay: var(--d, 0s);
     }
     @keyframes brotar {
-      from { opacity: 0; transform: scale(0.2) translateY(40px); }
-      to { opacity: 1; transform: scale(1) translateY(0); }
+      from { opacity: 0; transform: scale(0.2); }
+      to { opacity: 1; transform: scale(1); }
     }
 
     /* BLOQUE BARRA DE ARRIBA Y MUSICA */
@@ -816,7 +824,7 @@
         height: 72vh;
       }
       .lirios-final {
-        height: 30vh;
+        --k: 1.5;
       }
       .page-leaf-wrapper {
         padding: 20px 18px;
@@ -1082,21 +1090,8 @@
 <!-- BLOQUE ESCENA DEL LIBRO -->
 <section id="phase2-scene">
 
-  <!-- BLOQUE LIRIOS FINALES (SALEN EN LA ULTIMA PAGINA) -->
-  <div class="lirios-final" id="lirios-final">
-    <svg viewBox="0 240 1000 460" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
-      <g filter="url(#soft-depth-blur)" opacity="0.45">
-        <g class="brota" style="--d:0.2s"><use href="#lirio-amarillo" transform="scale(0.85) rotate(-14 120 380)" x="120" y="380"></use></g>
-        <g class="brota" style="--d:0.35s"><use href="#lirio-lila" transform="scale(0.82) rotate(16 780 360)" x="780" y="360"></use></g>
-        <g class="brota" style="--d:0.5s"><use href="#lirio-blanco" transform="scale(0.78)" x="460" y="320"></use></g>
-      </g>
-      <g class="brota" style="--d:0.45s"><use href="#lirio-rosa" transform="scale(1.15) rotate(-10 180 340)" x="180" y="340"></use></g>
-      <g class="brota" style="--d:0.65s"><use href="#lirio-durazno" transform="scale(1.22) rotate(-3 320 320)" x="320" y="320"></use></g>
-      <g class="brota" style="--d:0.85s"><use href="#lirio-blanco" transform="scale(1.3) rotate(0 500 300)" x="500" y="300"></use></g>
-      <g class="brota" style="--d:1.05s"><use href="#lirio-coral" transform="scale(1.2) rotate(6 680 325)" x="680" y="325"></use></g>
-      <g class="brota" style="--d:1.25s"><use href="#lirio-amarillo" transform="scale(1.12) rotate(12 800 345)" x="800" y="345"></use></g>
-    </svg>
-  </div>
+  <!-- BLOQUE LIRIOS FINALES (SE CREAN CON JAVASCRIPT Y SALEN EN LA ULTIMA PAGINA) -->
+  <div class="lirios-final" id="lirios-final"></div>
 
   <!-- BARRA DE ARRIBA CON MUSICA -->
   <div class="herbarium-topbar">
@@ -1186,6 +1181,49 @@
     }
     crearTextura();
 
+    //BLOQUE LIRIOS ALREDEDOR DEL LIBRO
+    //CADA UNO ES: [flor, izquierda %, arriba %, giro en grados, tamaño, retraso en segundos]
+    //GIRO 0 = MIRA ARRIBA, 90 = MIRA A LA DERECHA, -90 = MIRA A LA IZQUIERDA, 180 = MIRA ABAJO
+    const LIRIOS_FINAL = [
+      //FILA DE ABAJO
+      ["lirio-rosa", 5, 103, -6, 30, 0.1],
+      ["lirio-blanco", 17, 104, 5, 28, 0.2],
+      ["lirio-durazno", 29, 103, -4, 30, 0.3],
+      ["lirio-amarillo", 41, 104, 6, 27, 0.4],
+      ["lirio-coral", 53, 103, -5, 30, 0.5],
+      ["lirio-lila", 65, 104, 4, 28, 0.6],
+      ["lirio-blanco", 77, 103, -6, 30, 0.7],
+      ["lirio-rosa", 89, 104, 5, 28, 0.8],
+      ["lirio-durazno", 98, 103, -8, 30, 0.9],
+      //LADO IZQUIERDO
+      ["lirio-coral", -1, 78, 78, 26, 1.0],
+      ["lirio-amarillo", -1, 58, 92, 25, 1.1],
+      ["lirio-lila", -1, 38, 84, 26, 1.2],
+      ["lirio-rosa", -1, 18, 98, 25, 1.3],
+      //LADO DERECHO
+      ["lirio-lila", 101, 78, -80, 26, 1.0],
+      ["lirio-blanco", 101, 58, -92, 25, 1.1],
+      ["lirio-coral", 101, 38, -84, 26, 1.2],
+      ["lirio-durazno", 101, 18, -98, 25, 1.3],
+      //ARRIBA (SE DEJA LIBRE EL CENTRO PARA EL BOTON DE MUSICA)
+      ["lirio-amarillo", 14, -2, 176, 24, 1.4],
+      ["lirio-rosa", 34, -2, 184, 24, 1.5],
+      ["lirio-blanco", 66, -2, 178, 24, 1.6],
+      ["lirio-coral", 86, -2, 184, 24, 1.7]
+    ];
+
+    function crearLiriosFinal() {
+      const cont = document.getElementById("lirios-final");
+      cont.innerHTML = LIRIOS_FINAL.map(([id, x, y, giro, tam, retraso]) => `
+        <div class="lirio-pos" style="left:${x}%; top:${y}%; --r:${giro}deg; --s:${tam};">
+          <div class="brota" style="--d:${retraso}s;">
+            <svg viewBox="0 0 200 235" aria-hidden="true"><use href="#${id}"></use></svg>
+          </div>
+        </div>
+      `).join("");
+    }
+    crearLiriosFinal();
+
     //BLOQUE CARTAS DEL LIBRO DE BASE (LOS TEXTOS REALES SE LEEN DE textos.txt)
     const PAGINAS_BASE = [
       //CARTA 1: INTRODUCCION
@@ -1243,7 +1281,7 @@
         alin: "left",
         titulo: "Caminar Contigo",
         imagenSrc: "ft2.png",
-        pieFoto: "Mil risas compartidas",
+        pieFoto: "Mil momentos compartidas",
         texto: "No importa hacia dónde sople el viento; mientras sostengas mi mano eternamente, cualquier lugar del mundo es nuestro hogar.",
         piePagina: "Paso a Paso"
       },
